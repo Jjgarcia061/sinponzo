@@ -15,10 +15,11 @@ st.title("- Dashboard Epidemiológico -")
 
 
 # --- Rutas de archivos de entrada ---
-COORDS_CSV = r"C:\Users\jc698\OneDrive\Desktop\DASPONZO\COORDENADAS.csv"
-GEOJSON_FILE = r"C:\Users\jc698\OneDrive\Desktop\DASPONZO\16l_michoacan.geojson"
-CONSUMO_ANUAL_CSV = r"C:\Users\jc698\OneDrive\Desktop\DASPONZO\BASE1_2.csv"
-CONSUMO_HIST_CSV = r"C:\Users\jc698\OneDrive\Desktop\DASPONZO\BASE1_2.csv"
+COORDS_CSV = "COORDENADAS.csv"
+GEOJSON_FILE = "16l_michoacan.geojson"
+CONSUMO_ANUAL_CSV = "BASE1_2.csv"
+CONSUMO_HIST_CSV = "BASE1_2.csv"
+
 
 # --- Tabs principales ---
 tabs = st.tabs(["MAPA DE CALOR", "CONSUMO HISTORICO", "CASOS Y CONSUMO ANUAL", "HOSPITALES Y CENTROS DE SALUD"])
@@ -298,3 +299,4 @@ with tabs[3]:
         if col in tabla.columns:
             tabla[col] = tabla[col].fillna('-').replace('None', '-')
     st.dataframe(tabla)
+
