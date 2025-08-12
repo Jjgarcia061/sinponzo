@@ -1,6 +1,0 @@
-streamlit
-pandas
-plotly
-folium
-streamlit-folium
-unicodedata2
