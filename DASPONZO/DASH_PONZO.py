@@ -1,4 +1,3 @@
-
 #PARA INICIAR EL DASH DESPUES DE CORRER EL PROGRAMA EJECUTE EL SIGUIENTE COMANDO EN LA TERMINAL:
 #streamlit run DASH_PONZO.py
 import streamlit as st
@@ -15,10 +14,10 @@ st.title("- Dashboard Epidemiológico -")
 
 
 # --- Rutas de archivos de entrada ---
-COORDS_CSV = "DASPONZO/COORDENADAS.csv"
-GEOJSON_FILE = "DASPONZO/16l_michoacan.geojson"
-CONSUMO_ANUAL_CSV = "DASPONZO/BASE1_2.csv"
-CONSUMO_HIST_CSV = "DASPONZO/BASE1_2.csv"
+COORDS_CSV = "COORDENADAS.csv"
+GEOJSON_FILE = "16l_michoacan.geojson"
+CONSUMO_ANUAL_CSV = "BASE1_2.csv"
+CONSUMO_HIST_CSV = "BASE1_2.csv"
 
 # --- Tabs principales ---
 tabs = st.tabs(["MAPA DE CALOR", "CONSUMO HISTORICO", "CASOS Y CONSUMO ANUAL", "HOSPITALES Y CENTROS DE SALUD"])
@@ -254,8 +253,30 @@ with tabs[2]:
                 )
                 st.plotly_chart(fig2, use_container_width=True)
 
-      
+            # --- NUEVAS GRÁFICAS: RANGO DE EDADES Y CASOS POR GÉNERO ---
+            st.markdown("---")
+            # Grupos de edad personalizados
+            bins = [0, 4, 9, 14, 19, 24, 44, 49, 59, 64, 150]
+            labels = [
+                "0-4", "5-9", "10-14", "15-19", "20-24", "25-44",
+                "45-49", "50-59", "60-64", "65 y más"
+            ]
+            df_filt['GRUPO_EDAD'] = pd.cut(df_filt['IDE_EDAD_AÑOS'], bins=bins, labels=labels, right=True, include_lowest=True)
+            edad_counts = df_filt['GRUPO_EDAD'].value_counts().sort_index()
+            fig_edad = px.bar(x=edad_counts.index, y=edad_counts.values, labels={'x': 'Rango de edad', 'y': 'Casos'},
+                              title='RANGO DE EDADES', color_discrete_sequence=['#636EFA'])
+            st.plotly_chart(fig_edad, use_container_width=True)
+
+            # Gráfica de género
+            genero_counts = df_filt['IDE_SEX'].value_counts()
+            fig_genero = px.bar(x=genero_counts.index, y=genero_counts.values, labels={'x': 'Género', 'y': 'Casos'},
+                                title='CASOS POR GENERO', color_discrete_sequence=['#EF553B'])
+            st.plotly_chart(fig_genero, use_container_width=True)
+    except Exception as e:
         st.error(f"No se pudo cargar la base anual de consumo: {e}")
+
+
+    st.dataframe(tabla)
 
 
 
