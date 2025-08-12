@@ -254,49 +254,9 @@ with tabs[2]:
                 )
                 st.plotly_chart(fig2, use_container_width=True)
 
-            # --- NUEVAS GRÁFICAS: RANGO DE EDADES Y CASOS POR GÉNERO ---
-            st.markdown("---")
-            # Grupos de edad personalizados
-            bins = [0, 4, 9, 14, 19, 24, 44, 49, 59, 64, 150]
-            labels = [
-                "0-4", "5-9", "10-14", "15-19", "20-24", "25-44",
-                "45-49", "50-59", "60-64", "65 y más"
-            ]
-            df_filt['GRUPO_EDAD'] = pd.cut(df_filt['IDE_EDAD_AÑOS'], bins=bins, labels=labels, right=True, include_lowest=True)
-            edad_counts = df_filt['GRUPO_EDAD'].value_counts().sort_index()
-            fig_edad = px.bar(x=edad_counts.index, y=edad_counts.values, labels={'x': 'Rango de edad', 'y': 'Casos'},
-                              title='RANGO DE EDADES', color_discrete_sequence=['#636EFA'])
-            st.plotly_chart(fig_edad, use_container_width=True)
-
-            # Gráfica de género
-            genero_counts = df_filt['IDE_SEX'].value_counts()
-            fig_genero = px.bar(x=genero_counts.index, y=genero_counts.values, labels={'x': 'Género', 'y': 'Casos'},
-                                title='CASOS POR GENERO', color_discrete_sequence=['#EF553B'])
-            st.plotly_chart(fig_genero, use_container_width=True)
-    except Exception as e:
+      
         st.error(f"No se pudo cargar la base anual de consumo: {e}")
-# --- HOSPITALES Y CENTROS DE SALUD ---
-with tabs[3]:
-    st.header("HOSPITALES Y CENTROS DE SALUD")
-    JURISDICCIONES = {
-        1: 'MORELIA', 2: 'ZAMORA', 3: 'ZITÁCUARO', 4: 'PÁTZCUARO',
-        5: 'URUAPAN', 6: 'LA PIEDAD', 7: 'APATZINGÁN', 8: 'LÁZARO CÁRDENAS'
-    }
-    juris_nombres = list(JURISDICCIONES.values())
-    juris_sel = st.selectbox("Selecciona una jurisdicción", options=juris_nombres)
-    df_hosp = df.copy() if 'df' in locals() else pd.read_csv(CONSUMO_ANUAL_CSV, encoding='utf-8')
-    df_hosp = df_hosp[df_hosp['JURISDICCION'] == juris_sel]
-    frasco_cols = [f'NUM_FRASCO_APL_{i}' for i in range(1, 11)]
-    df_hosp['CONSUMO_TOTAL_FRASCOS'] = df_hosp[frasco_cols].sum(axis=1)
-    lote_cols = [f'LOT_{i}' for i in range(1, 11)]
-    cols_mostrar = ['Fecha de notificación', 'FOL_Plat', 'UNI_MED_TRA', 'CLUES_TRATA', 'CONSUMO_TOTAL_FRASCOS'] + lote_cols
-    cols_existentes = [col for col in cols_mostrar if col in df_hosp.columns]
-    st.subheader(f"Casos y consumo en {juris_sel}")
-    tabla = df_hosp[cols_existentes].reset_index(drop=True).copy()
-    tabla.index = tabla.index + 1
-    for col in lote_cols:
-        if col in tabla.columns:
-            tabla[col] = tabla[col].fillna('-').replace('None', '-')
-    st.dataframe(tabla)
+
+
 
 
